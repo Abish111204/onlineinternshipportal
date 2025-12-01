@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Join InternConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f172a; --accent: #2563eb; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        body {
+            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 40px 20px;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9)),
+                        url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+
+        .reg-card {
+            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); width: 100%; max-width: 550px;
+            border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden; animation: slideUp 0.6s ease-out;
+        }
+        .reg-header { background: linear-gradient(135deg, var(--accent), #1e40af); padding: 35px; text-align: center; color: white; }
+        .reg-header h2 { margin: 0; font-size: 1.8rem; }
+        .reg-header p { opacity: 0.9; margin-top: 5px; font-size: 1rem; }
+
+        .tabs { display: flex; background: #f1f5f9; padding: 8px; margin: 20px 30px 0; border-radius: 10px; }
+        .tab { flex: 1; text-align: center; padding: 10px; text-decoration: none; color: #64748b; font-weight: 700; border-radius: 8px; transition: 0.3s; font-size: 0.9rem; }
+        .tab:hover { color: var(--accent); background: rgba(255,255,255,0.5); }
+        .tab.active { background: white; color: var(--accent); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        .reg-form { padding: 30px; }
+        .form-group { margin-bottom: 15px; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; box-sizing: border-box; transition: 0.3s; }
+        .form-control:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+        .btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .btn-dark { background: var(--primary); }
+        .btn-dark:hover { background: #000; }
+
+        .login-link { text-align: center; margin-top: 20px; color: #64748b; font-size: 0.9rem; }
+        .login-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+        .helper-text { font-size: 0.8rem; color: #64748b; margin-top: 4px; display: block; }
+    </style>
+</head>
+<body>
+    <div class="reg-card">
+        <div class="reg-header">
+            <h2>Create Account</h2>
+            <p>Join the professional network today</p>
+        </div>
+
+        <div class="tabs">
+            <a href="{% url 'register' %}" class="tab {% if request.resolver_match.url_name == 'register' %}active{% endif %}">
+                <i class="fas fa-user-graduate"></i> Student
+            </a>
+            <a href="{% url 'employer_register' %}" class="tab {% if request.resolver_match.url_name == 'employer_register' %}active{% endif %}">
+                <i class="fas fa-building"></i> Employer
+            </a>
+        </div>
+
+        <div class="reg-form">
+            {% if msg %}<p style="color: red; text-align: center; font-weight:bold;">{{ msg }}</p>{% endif %}
+
+            {% if request.resolver_match.url_name == 'register' %}
+            <form method="POST">
+                {% csrf_token %}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group"><input type="text" name="first_name" class="form-control" placeholder="First Name" required></div>
+                    <div class="form-group"><input type="text" name="last_name" class="form-control" placeholder="Last Name" required></div>
+                </div>
+                <div class="form-group"><input type="email" name="email" class="form-control" placeholder="Email Address" required></div>
+
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    <small class="helper-text"><i class="fas fa-lock"></i> Use at least 8 characters.</small>
+                </div>
+
+                <div class="form-group"><input type="text" name="university" class="form-control" placeholder="University" required></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group"><input type="text" name="major" class="form-control" placeholder="Major" required></div>
+                    <div class="form-group"><input type="text" name="graduation_year" class="form-control" placeholder="Grad Year" required></div>
+                </div>
+                <div class="form-group"><input type="text" name="degree" class="form-control" placeholder="Degree" required></div>
+                <button type="submit" class="btn">Register as Student</button>
+            </form>
+            {% else %}
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group"><input type="text" name="company_name" class="form-control" placeholder="Company Name" required></div>
+                <div class="form-group"><input type="text" name="company_website" class="form-control" placeholder="Company Website"></div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group"><input type="text" name="industry" class="form-control" placeholder="Industry" required></div>
+                    <div class="form-group"><input type="text" name="company_size" class="form-control" placeholder="Size" required></div>
+                </div>
+
+                <div class="form-group"><input type="text" name="company_address" class="form-control" placeholder="Address" required></div>
+
+                <div class="form-group" style="border: 2px dashed #cbd5e1; padding: 15px; border-radius: 8px; background: #f8fafc;">
+                    <label style="display:block; margin-bottom:5px; color:#64748b; font-size:0.85rem;">Upload Verification (License/ID)</label>
+                    <input type="file" name="verification_doc" class="form-control" style="border:none; padding:0;" required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <div class="form-group"><input type="text" name="first_name" class="form-control" placeholder="Contact First Name" required></div>
+                    <div class="form-group"><input type="text" name="last_name" class="form-control" placeholder="Contact Last Name" required></div>
+                </div>
+                <div class="form-group"><input type="email" name="email" class="form-control" placeholder="Work Email" required></div>
+                <div class="form-group"><input type="password" name="password" class="form-control" placeholder="Password" required></div>
+
+                <button type="submit" class="btn btn-dark">Register Company</button>
+            </form>
+            {% endif %}
+
+            <div class="login-link">Already have an account? <a href="{% url 'login' %}">Log in</a></div>
+        </div>
+    </div>
+</body>
+</html>

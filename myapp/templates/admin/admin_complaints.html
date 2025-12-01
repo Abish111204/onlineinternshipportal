@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Disputes | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f172a; --accent: #2563eb; --shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        body {
+            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px;
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)),
+                        url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover; background-attachment: fixed; min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 30px; }
+        .sidebar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 25px; height: fit-content; min-height: 80vh; box-shadow: var(--shadow); position: sticky; top: 20px; }
+        .brand { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 14px; color: #64748b; text-decoration: none; border-radius: 10px; margin-bottom: 5px; font-weight: 500; transition: 0.3s; }
+        .menu-item:hover { background: #f1f5f9; color: var(--accent); }
+        .menu-item.active { background: #eff6ff; color: var(--accent); font-weight: 600; border-left: 4px solid var(--accent); }
+        .menu-item i { width: 20px; text-align: center; }
+        .logout { margin-top: auto; color: #ef4444; }
+
+        .header h1 { margin: 0; color: white; font-size: 1.8rem; margin-bottom: 20px; }
+        .card { background: rgba(255, 255, 255, 0.98); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; animation: slideUp 0.6s ease-out; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 20px 25px; text-align: left; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+        th { background: #f8fafc; color: #64748b; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
+        tr:hover { background-color: #fdfdfd; }
+
+        .tag { padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .tag-user { background: #eff6ff; color: #2563eb; }
+        .tag-company { background: #f3e8ff; color: #7e22ce; }
+        .status-pending { color: #b45309; background: #fffbeb; padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; }
+        .status-resolved { color: #15803d; background: #dcfce7; padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; }
+        .btn-resolve { background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9rem; }
+        .empty-state { padding: 60px; text-align: center; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="brand"><i class="fas fa-shield-alt"></i> Admin Panel</div>
+            <a href="{% url 'admin_dashboard' %}" class="menu-item"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="{% url 'new_company' %}" class="menu-item"><i class="fas fa-user-clock"></i> Pending Approvals</a>
+            <a href="{% url 'company_list' %}" class="menu-item"><i class="fas fa-building"></i> All Companies</a>
+            <a href="#" class="menu-item active"><i class="fas fa-gavel"></i> Disputes & Issues</a>
+            <a href="{% url 'admin_send_notification' %}" class="menu-item"><i class="fas fa-bullhorn"></i> Broadcast</a>
+            <a href="{% url 'logout' %}" class="menu-item logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+
+        <div class="main-content">
+            <div class="header"><h1>Dispute Resolution Center</h1></div>
+            <div class="card">
+                <table>
+                    <thead><tr><th>Raised By</th><th>Issue Details</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody>
+                        {% for c in complaints %}
+                        <tr>
+                            <td>
+                                {% if c.filed_by == 'Student' %}<span class="tag tag-user">Student</span><div style="margin-top:5px; font-weight:600;">{{ c.student.name }}</div>
+                                {% else %}<span class="tag tag-company">Employer</span><div style="margin-top:5px; font-weight:600;">{{ c.company.company_name }}</div>{% endif %}
+                                <div style="font-size:0.85rem; color:#64748b;">{{ c.date_filed|date:"M d, Y" }}</div>
+                            </td>
+                            <td style="max-width: 400px;">
+                                <div style="font-weight: bold; color: #1e293b; margin-bottom: 5px;">{{ c.subject }}</div>
+                                <p style="margin:0; color:#475569; font-size:0.9rem; line-height:1.5;">{{ c.description }}</p>
+                            </td>
+                            <td>
+                                {% if c.status == 'Pending' %}<span class="status-pending">Pending Review</span>
+                                {% else %}<span class="status-resolved">Resolved</span>{% endif %}
+                            </td>
+                            <td>
+                                {% if c.status == 'Pending' %}<a href="{% url 'resolve_complaint' c.id %}" class="btn-resolve"><i class="fas fa-check"></i> Mark Resolved</a>
+                                {% else %}<span style="color:#cbd5e1;"><i class="fas fa-lock"></i> Closed</span>{% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="empty-state"><i class="fas fa-smile-beam" style="font-size:3rem;"></i><p>No active disputes.</p></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

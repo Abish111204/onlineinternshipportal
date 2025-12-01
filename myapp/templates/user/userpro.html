@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | InternConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Profile Section */
+        .profile-section {
+            padding: 40px 0;
+        }
+
+        .profile-container {
+            display: flex;
+            gap: 30px;
+        }
+
+        /* Profile Sidebar */
+        .profile-sidebar {
+            width: 300px;
+            flex-shrink: 0;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2.5rem;
+            color: var(--primary);
+            border: 4px solid white;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .profile-title {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .profile-menu {
+            padding: 15px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            color: var(--dark);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Profile Content */
+        .profile-content {
+            flex: 1;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .edit-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .edit-btn:hover {
+            text-decoration: underline;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: var(--dark);
+        }
+
+        .not-provided {
+            color: var(--gray);
+            font-style: italic;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-tag {
+            background: #e0f2fe;
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .experience-item, .education-item {
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .experience-item:last-child, .education-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .item-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .item-subtitle {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .item-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .item-description {
+            color: var(--gray);
+            margin-top: 10px;
+        }
+
+        /* Applications */
+        .application-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .application-info h3 {
+            margin-bottom: 5px;
+        }
+
+        .application-company {
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .application-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-reviewed {
+            background: #dbeafe;
+            color: var(--primary);
+        }
+
+        .status-accepted {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .status-rejected {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .profile-container {
+                flex-direction: column;
+            }
+
+            .profile-sidebar {
+                width: 100%;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links, .user-menu {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .application-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Add this new style for not-provided fields */
+        .not-provided {
+            color: var(--gray);
+            font-style: italic;
+        }
+    </style>
+
+
+
+
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="user.html" class="logo">
+                    <i class="fas fa-handshake"></i>
+                    <span>InternConnect</span>
+                </a>
+                <div class="nav-links">
+                    <a href="user.html">Home</a>
+                    <a href="internships.html">Internships</a>
+                    <a href="companies.html">Companies</a>
+                    <a href="resources.html">Resources</a>
+                    <a href="profile.html" class="active">Profile</a>
+                </div>
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        {% if user %}
+                            {{ user.name|first|upper }}{{ user.last_name|first|upper }}
+                        {% else %}
+                            US
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mobile-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Profile Section -->
+    <section class="profile-section">
+        <div class="container">
+            <div class="profile-container">
+                <!-- Profile Sidebar -->
+                <div class="profile-sidebar">
+                    <div class="profile-card">
+                        <div class="profile-header">
+                            <div class="profile-avatar">
+                                {% if user %}
+                                    {{ user.name|first|upper }}{{ user.last_name|first|upper }}
+                                {% else %}
+                                    US
+                                {% endif %}
+                            </div>
+                            <div class="profile-name">
+                                {% if user %}
+                                    {{ user.name }} {{ user.last_name }}
+                                {% else %}
+                                    User Name
+                                {% endif %}
+                            </div>
+                            <div class="profile-title">
+                                {% if user and user.major %}
+                                    {{ user.major }} Student
+                                {% else %}
+                                    Student
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Applied</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Interviews</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Offers</div>
+                            </div>
+                        </div>
+                        <div class="profile-menu">
+                            <a href="#" class="menu-item active">
+                                <i class="fas fa-user"></i>
+                                <span>Profile Overview</span>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <i class="fas fa-edit"></i>
+                                <span>Edit Profile</span>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span>My Applications</span>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <i class="fas fa-heart"></i>
+                                <span>Saved Internships</span>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Account Settings</span>
+                            </a>
+                            <a href="#" class="menu-item">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Content -->
+                <div class="profile-content">
+                    <!-- Personal Information -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Personal Information</h2>
+                            <button class="edit-btn">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </button>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label">Full Name</div>
+                                <div class="info-value">
+                                    {% if reg %}
+                                        {{ reg.name }} {{ user.last_name }}
+                                    {% else %}
+                                        <span class="not-provided">Not provided</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">
+                                    {% if user and user.email %}
+                                        {{ user.email }}
+                                    {% else %}
+                                        <span class="not-provided">Not provided</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value not-provided">Not provided</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">University</div>
+                                <div class="info-value">
+                                    {% if user and user.university %}
+                                        {{ user.university }}
+                                    {% else %}
+                                        <span class="not-provided">Not provided</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Major</div>
+                                <div class="info-value">
+                                    {% if user and user.major %}
+                                        {{ user.major }}
+                                    {% else %}
+                                        <span class="not-provided">Not provided</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Degree</div>
+                                <div class="info-value">
+                                    {% if user and user.degree %}
+                                        {{ user.degree }}
+                                    {% else %}
+                                        <span class="not-provided">Not provided</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Education</h2>
+                            <button class="edit-btn">
+                                <i class="fas fa-plus"></i>
+                                Add Education
+                            </button>
+                        </div>
+                        <div class="education-item">
+                            <div class="item-header">
+                                <div>
+                                    <div class="item-title">
+                                        {% if user and user.degree %}
+                                            {{ user.degree }}
+                                        {% else %}
+                                            Degree Information
+                                        {% endif %}
+                                    </div>
+                                    <div class="item-subtitle">
+                                        {% if user and user.university %}
+                                            {{ user.university }}
+                                        {% else %}
+                                            University Name
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="item-date">
+                                    {% if user and user.graduation_year %}
+                                        Expected {{ user.graduation_year }}
+                                    {% else %}
+                                        Graduation Year
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="item-description">
+                                {% if user and user.GPA %}
+                                    GPA: {{ user.GPA }}
+                                {% else %}
+                                    GPA: Not provided
+                                {% endif %}
+                                {% if user and user.major %}
+                                    <br>Major: {{ user.major }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+<!-- Skills -->
+<div class="content-section">
+    <div class="section-header">
+        <h2 class="section-title">Skills</h2>
+        <button class="edit-btn">
+            <i class="fas fa-edit"></i>
+            Edit Skills
+        </button>
+    </div>
+    <div class="info-item">
+        <div class="info-label">Technical Skills</div>
+        <div class="skills-list">
+            {% if user and user.skills %}
+                {% for skill in user.skills.split %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% endfor %}
+            {% else %}
+                <span class="not-provided">No skills added yet</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+                    <!-- Bio -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Bio</h2>
+                            <button class="edit-btn">
+                                <i class="fas fa-edit"></i>
+                                Edit Bio
+                            </button>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-value">
+                                {% if user and user.Bio %}
+                                    {{ user.Bio }}
+                                {% else %}
+                                    <span class="not-provided">No bio added yet</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resume -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Resume</h2>
+                            <button class="edit-btn">
+                                <i class="fas fa-edit"></i>
+                                Upload Resume
+                            </button>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-value">
+                                {% if user and user.Upload_Resume %}
+                                    <a href="{{ user.Upload_Resume.url }}" target="_blank">View Resume</a>
+                                {% else %}
+                                    <span class="not-provided">No resume uploaded yet</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Edit profile functionality
+            const editButtons = document.querySelectorAll('.edit-btn');
+
+            editButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const sectionTitle = this.closest('.section-header').querySelector('.section-title').textContent;
+                    alert(`Edit ${sectionTitle} functionality would open here.`);
+                });
+            });
+
+            // Mobile menu toggle
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const navLinks = document.querySelector('.nav-links');
+            const userMenu = document.querySelector('.user-menu');
+
+            mobileMenu.addEventListener('click', function() {
+                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+                userMenu.style.display = userMenu.style.display === 'flex' ? 'none' : 'flex';
+
+                if (navLinks.style.display === 'flex') {
+                    navLinks.style.flexDirection = 'column';
+                    navLinks.style.position = 'absolute';
+                    navLinks.style.top = '70px';
+                    navLinks.style.left = '0';
+                    navLinks.style.right = '0';
+                    navLinks.style.backgroundColor = 'white';
+                    navLinks.style.padding = '20px';
+                    navLinks.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+
+                    userMenu.style.flexDirection = 'column';
+                    userMenu.style.position = 'absolute';
+                    userMenu.style.top = '220px';
+                    userMenu.style.left = '0';
+                    userMenu.style.right = '0';
+                    userMenu.style.backgroundColor = 'white';
+                    userMenu.style.padding = '20px';
+                    userMenu.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                }
+            });
+
+            // Profile menu navigation
+            const menuItems = document.querySelectorAll('.menu-item');
+
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const menuText = this.querySelector('span').textContent;
+                    alert(`Navigating to ${menuText} section.`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

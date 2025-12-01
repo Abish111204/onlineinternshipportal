@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Browse Jobs | InternConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f172a; --accent: #2563eb; --light: #f1f5f9; --shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        body {
+            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px;
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9)),
+                        url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover; background-attachment: fixed; min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 30px; }
+
+        /* SIDEBAR & FILTERS */
+        .sidebar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 25px; height: fit-content; min-height: 80vh; position: sticky; top: 20px; box-shadow: var(--shadow); }
+        .brand { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 14px; color: #64748b; text-decoration: none; border-radius: 10px; margin-bottom: 5px; font-weight: 500; transition: 0.3s; }
+        .menu-item:hover { background: #f1f5f9; color: var(--accent); padding-left: 15px; }
+        .menu-item.active { background: #eff6ff; color: var(--accent); font-weight: 600; border-left: 4px solid var(--accent); }
+        .menu-item i { width: 20px; text-align: center; }
+
+        .filter-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
+        .filter-input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; box-sizing: border-box; }
+        .btn-filter { width: 100%; padding: 10px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        /* JOB GRID */
+        .header { margin-bottom: 25px; color: white; }
+        .job-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95); border-radius: 16px; overflow: hidden;
+            box-shadow: var(--shadow); transition: 0.3s; display: flex; flex-direction: column;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); }
+
+        .card-header { padding: 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px; }
+        .logo { width: 50px; height: 50px; background: #eff6ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent); font-size: 1.2rem; }
+
+        .card-body { padding: 20px; flex: 1; }
+        .job-title { font-size: 1.15rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; display: block; }
+        .details { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; font-size: 0.85rem; color: #64748b; }
+        .details span { background: #f1f5f9; padding: 5px 10px; border-radius: 6px; }
+
+        .card-footer { padding: 15px 20px; background: #f8fafc; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; }
+
+        .btn-apply { background: var(--accent); color: white; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .btn-apply:hover { background: #1d4ed8; }
+        .btn-disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; padding: 8px 20px; border-radius: 8px; font-weight: bold; border: none; }
+        .save-btn { font-size: 1.2rem; transition: 0.3s; }
+        .save-btn:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="brand"><i class="fas fa-handshake"></i> InternConnect</div>
+            <a href="{% url 'user_dashboard' %}" class="menu-item"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a href="{% url 'user_edit' %}" class="menu-item"><i class="fas fa-user-edit"></i> Edit Profile</a>
+            <a href="{% url 'my_applications' %}" class="menu-item"><i class="fas fa-briefcase"></i> My Applications</a>
+            <a href="#" class="menu-item active"><i class="fas fa-search"></i> Browse Jobs</a>
+            <a href="{% url 'my_notifications' %}" class="menu-item"><i class="fas fa-bell"></i> Notifications</a>
+            <a href="{% url 'project_archive' %}" class="menu-item"><i class="fas fa-folder-open"></i> Project Archive</a>
+            <a href="{% url 'file_complaint' %}" class="menu-item"><i class="fas fa-exclamation-circle"></i> Support</a>
+            <a href="{% url 'logout' %}" class="menu-item" style="color: #ef4444; margin-top: 30px;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+            <div class="filter-section">
+                <h4 style="font-size: 0.9rem; color: #64748b; margin-bottom: 15px; text-transform: uppercase;">Filter Jobs</h4>
+                <form method="GET" action="{% url 'browse_internships' %}">
+                    <input type="text" name="q" placeholder="Search keywords..." value="{{ request.GET.q }}" class="filter-input">
+                    <select name="category" class="filter-input">
+                        <option value="All">All Categories</option>
+                        <option value="Software">Software</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Design">Design</option>
+                        <option value="Finance">Finance</option>
+                    </select>
+                    <select name="location" class="filter-input">
+                        <option value="">Any Type</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Full-time">Full-time</option>
+                        <option value="Part-time">Part-time</option>
+                    </select>
+                    <button type="submit" class="btn-filter">Apply Filters</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header"><h1>Available Opportunities</h1></div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div style="background: #dcfce7; color: #166534; padding: 15px; border-radius: 8px; margin-bottom: 20px;">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="job-grid">
+                {% for i in inte %}
+                <div class="card">
+                    <div class="card-header">
+                        <div class="logo">{{ i.company.company_name|slice:":2"|upper }}</div>
+                        <div style="flex: 1;">
+                            <h3 style="margin:0; font-size:1rem; color:var(--primary);">{{ i.company.company_name }}</h3>
+                            <p style="margin:0; font-size:0.85rem; color:#64748b;">{{ i.company.industry }}</p>
+                        </div>
+                        <a href="{% url 'toggle_save' i.id %}" class="save-btn" style="color: {% if i.id in saved_ids %}#ef4444{% else %}#cbd5e1{% endif %};" title="Save Job">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <span class="job-title">{{ i.positionTitle }}</span>
+                        <div class="details">
+                            <span><i class="fas fa-clock"></i> {{ i.internshipType }}</span>
+                            <span><i class="fas fa-money-bill"></i> {{ i.stipend }}</span>
+                        </div>
+                        <p style="color:#64748b; font-size:0.9rem; line-height:1.5;">{{ i.positionDescription|truncatechars:90 }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <small style="color:#64748b;">Due: {{ i.applicationDeadline }}</small>
+                        {% if i.id in applied_ids %}
+                            <button class="btn-disabled"><i class="fas fa-check"></i> Applied</button>
+                        {% else %}
+                            <a href="{% url 'apply_internship' i.id %}" class="btn-apply">Apply Now</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div style="grid-column: 1 / -1; text-align: center; color: white; padding: 50px;">
+                    <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.7;"></i>
+                    <p>No internships match your filters.</p>
+                    <a href="{% url 'browse_internships' %}" style="color: #60a5fa; font-weight: bold;">Clear Filters</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

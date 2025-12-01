@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pending Approvals | Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f172a; --accent: #2563eb; --shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        body {
+            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px;
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)),
+                        url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover; background-attachment: fixed; min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 30px; }
+
+        .sidebar { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 25px; height: fit-content; min-height: 80vh; box-shadow: var(--shadow); position: sticky; top: 20px; }
+        .brand { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 14px; color: #64748b; text-decoration: none; border-radius: 10px; margin-bottom: 5px; font-weight: 500; transition: 0.3s; }
+        .menu-item:hover { background: #f1f5f9; color: var(--accent); }
+        .menu-item.active { background: #eff6ff; color: var(--accent); font-weight: 600; border-left: 4px solid var(--accent); }
+        .menu-item i { width: 20px; text-align: center; }
+        .logout { margin-top: auto; color: #ef4444; }
+
+        .header h1 { margin: 0; color: white; font-size: 1.8rem; margin-bottom: 20px; }
+
+        .card { background: rgba(255, 255, 255, 0.98); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; animation: slideUp 0.6s ease-out; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 20px 25px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        th { background: #f8fafc; color: #64748b; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
+        tr:hover { background-color: #fdfdfd; }
+
+        .btn { padding: 8px 16px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: bold; margin-right: 5px; display: inline-block; }
+        .btn-approve { background: #dcfce7; color: #166534; }
+        .btn-approve:hover { background: #bbf7d0; }
+        .btn-reject { background: #fee2e2; color: #991b1b; }
+        .btn-reject:hover { background: #fecaca; }
+
+        .empty-state { padding: 60px; text-align: center; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="brand"><i class="fas fa-shield-alt"></i> Admin Panel</div>
+            <a href="{% url 'admin_dashboard' %}" class="menu-item"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="#" class="menu-item active"><i class="fas fa-user-clock"></i> Pending Approvals</a>
+            <a href="{% url 'company_list' %}" class="menu-item"><i class="fas fa-building"></i> All Companies</a>
+            <a href="{% url 'admin_complaints' %}" class="menu-item"><i class="fas fa-gavel"></i> Disputes & Issues</a>
+            <a href="{% url 'admin_send_notification' %}" class="menu-item"><i class="fas fa-bullhorn"></i> Broadcast</a>
+            <a href="{% url 'logout' %}" class="menu-item logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+
+        <div class="main-content">
+            <div class="header"><h1>Pending Approvals</h1></div>
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr><th>Company Name</th><th>Industry</th><th>Email</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for i in com %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: bold; color: #1e293b;">{{ i.company_name }}</div>
+                                <div style="font-size: 0.85rem; color: #64748b;">{{ i.company_website }}</div>
+                            </td>
+                            <td><span style="background:#eff6ff; color:#2563eb; padding:4px 10px; border-radius:20px; font-size:0.8rem; font-weight:600;">{{ i.industry }}</span></td>
+                            <td>{{ i.email }}</td>
+                            <td>
+                                <a href="{% url 'approve_company' i.id %}" class="btn btn-approve"><i class="fas fa-check"></i> Approve</a>
+                                <a href="{% url 'reject_company' i.id %}" class="btn btn-reject"><i class="fas fa-times"></i> Reject</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="empty-state"><i class="fas fa-check-circle" style="font-size:3rem;margin-bottom:10px;"></i><p>All caught up!</p></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

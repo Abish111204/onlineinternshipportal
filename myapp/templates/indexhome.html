@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InternConnect | Find Your Perfect Internship</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 8px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        /* Smooth Scrolling for the "Elegant" feel */
+        html { scroll-behavior: smooth; }
+
+        body { background-color: #f1f5f9; color: var(--dark); line-height: 1.6; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Navbar */
+        header { background-color: white; box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; transition: all 0.3s; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 500; transition: color 0.3s; position: relative; }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background-color: var(--primary); transition: width 0.3s; }
+        .nav-links a:hover::after { width: 100%; }
+
+        .auth-buttons { display: flex; gap: 15px; }
+        .btn { padding: 10px 25px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s; border: none; font-size: 0.95rem; text-decoration: none; display: inline-block; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-secondary:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        /* Hero Section */
+        .hero { background: linear-gradient(135deg, var(--primary), #1e1b4b); color: white; padding: 140px 0 100px; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%); }
+        .hero h1 { font-size: 3.5rem; margin-bottom: 20px; font-weight: 800; letter-spacing: -1px; }
+        .hero p { font-size: 1.25rem; max-width: 700px; margin: 0 auto 30px; opacity: 0.9; }
+
+        /* Sections */
+        .section { padding: 100px 0; }
+        .section-title { text-align: center; margin-bottom: 60px; }
+        .section-title h2 { font-size: 2.5rem; color: var(--dark); margin-bottom: 15px; font-weight: 700; }
+        .section-title p { color: var(--gray); max-width: 600px; margin: 0 auto; font-size: 1.1rem; }
+
+        .section-bg-white { background-color: white; }
+        .section-bg-light { background-color: #f8fafc; }
+
+        /* Internships Grid */
+        .internships-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; margin-top: 40px; }
+        .internship-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); transition: all 0.3s; border: 1px solid #e2e8f0; }
+        .internship-card:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .card-body { padding: 25px; }
+        .company-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+        .logo-box { width: 50px; height: 50px; background: #eff6ff; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--primary); }
+        .job-title { font-size: 1.2rem; font-weight: 700; color: var(--dark); display: block; margin-bottom: 10px; }
+        .job-meta { display: flex; gap: 15px; font-size: 0.9rem; color: var(--gray); margin-bottom: 15px; }
+        .job-meta i { color: var(--secondary); margin-right: 5px; }
+
+        /* Companies Grid */
+        .companies-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 30px; align-items: center; margin-top: 50px; }
+        .company-item { background: white; padding: 20px; border-radius: 10px; box-shadow: var(--shadow); text-align: center; transition: 0.3s; filter: grayscale(100%); opacity: 0.7; }
+        .company-item:hover { filter: grayscale(0%); opacity: 1; transform: scale(1.05); }
+        .company-item i { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        .company-item h4 { font-size: 1.1rem; color: var(--dark); }
+
+        /* About Section */
+        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .about-img { width: 100%; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+
+        /* Stats */
+        .stats-container { display: flex; gap: 40px; margin-top: 30px; }
+        .stat h3 { font-size: 2.5rem; color: var(--primary); margin: 0; font-weight: 800; }
+        .stat p { color: var(--gray); margin: 0; }
+
+        /* Footer */
+        footer { background: #0f172a; color: white; padding: 70px 0 30px; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 50px; }
+        .footer-col h3 { color: white; margin-bottom: 20px; font-size: 1.2rem; }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 12px; }
+        .footer-col a { color: #94a3b8; text-decoration: none; transition: 0.3s; }
+        .footer-col a:hover { color: white; }
+        .copyright { text-align: center; padding-top: 30px; border-top: 1px solid #1e293b; color: #64748b; }
+
+        @media (max-width: 768px) {
+            .nav-links, .auth-buttons { display: none; }
+            .hero { padding: 100px 0 80px; }
+            .hero h1 { font-size: 2.5rem; }
+            .about-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="{% url 'index' %}" class="logo">
+                    <i class="fas fa-handshake"></i>
+                    <span>InternConnect</span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="#">Home</a>
+                    <a href="#internships">Internships</a>
+                    <a href="#companies">Companies</a>
+                    <a href="#about">About</a>
+                </div>
+
+                <div class="auth-buttons">
+                    <a href="{% url 'login' %}" class="btn btn-outline">Login</a>
+                    <a href="{% url 'register' %}" class="btn btn-primary">Sign Up</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Launch Your Career <br> With The Perfect Internship</h1>
+            <p>Join thousands of students connecting with world-class employers. Your future starts here.</p>
+            <div style="margin-top: 40px;">
+                <a href="{% url 'register' %}" class="btn btn-secondary" style="padding: 15px 40px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">Get Started For Free</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="internships" class="section section-bg-white">
+        <div class="container">
+            <div class="section-title">
+                <h2>Explore Opportunities</h2>
+                <p>Discover roles that match your skills and career goals. We curate the best internships from verified employers.</p>
+            </div>
+
+            <div class="internships-grid">
+                <div class="internship-card">
+                    <div class="card-body">
+                        <div class="company-header">
+                            <div class="logo-box">G</div>
+                            <span style="background: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">Remote</span>
+                        </div>
+                        <span class="job-title">Software Engineer Intern</span>
+                        <div class="job-meta">
+                            <span><i class="fas fa-building"></i> Google</span>
+                            <span><i class="fas fa-money-bill"></i> $30/hr</span>
+                        </div>
+                        <p style="color: #64748b; font-size: 0.9rem;">Join our engineering team to build scalable systems and learn from the best.</p>
+                        <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 20px 0;">
+                        <a href="{% url 'register' %}" style="text-decoration: none; color: var(--primary); font-weight: bold;">Apply Now &rarr;</a>
+                    </div>
+                </div>
+
+                <div class="internship-card">
+                    <div class="card-body">
+                        <div class="company-header">
+                            <div class="logo-box">A</div>
+                            <span style="background: #fce7f3; color: #9d174d; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">On-site</span>
+                        </div>
+                        <span class="job-title">Product Design Intern</span>
+                        <div class="job-meta">
+                            <span><i class="fas fa-building"></i> Airbnb</span>
+                            <span><i class="fas fa-money-bill"></i> $25/hr</span>
+                        </div>
+                        <p style="color: #64748b; font-size: 0.9rem;">Work with our design team to create beautiful and accessible user experiences.</p>
+                        <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 20px 0;">
+                        <a href="{% url 'register' %}" style="text-decoration: none; color: var(--primary); font-weight: bold;">Apply Now &rarr;</a>
+                    </div>
+                </div>
+
+                <div class="internship-card">
+                    <div class="card-body">
+                        <div class="company-header">
+                            <div class="logo-box">S</div>
+                            <span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">Hybrid</span>
+                        </div>
+                        <span class="job-title">Data Analyst Intern</span>
+                        <div class="job-meta">
+                            <span><i class="fas fa-building"></i> Spotify</span>
+                            <span><i class="fas fa-money-bill"></i> $28/hr</span>
+                        </div>
+                        <p style="color: #64748b; font-size: 0.9rem;">Analyze data trends and help us personalize the music experience for millions.</p>
+                        <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 20px 0;">
+                        <a href="{% url 'register' %}" style="text-decoration: none; color: var(--primary); font-weight: bold;">Apply Now &rarr;</a>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px;">
+                <a href="{% url 'browse_internships' %}" class="btn btn-primary">View All Internships</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="companies" class="section section-bg-light">
+        <div class="container">
+            <div class="section-title">
+                <h2>Trusted by Top Companies</h2>
+                <p>We partner with industry leaders and fast-growing startups to bring you the best career opportunities.</p>
+            </div>
+
+            <div class="companies-grid">
+                <div class="company-item"><i class="fab fa-microsoft"></i><h4>Microsoft</h4></div>
+                <div class="company-item"><i class="fab fa-google"></i><h4>Google</h4></div>
+                <div class="company-item"><i class="fab fa-amazon"></i><h4>Amazon</h4></div>
+                <div class="company-item"><i class="fab fa-apple"></i><h4>Apple</h4></div>
+                <div class="company-item"><i class="fab fa-spotify"></i><h4>Spotify</h4></div>
+                <div class="company-item"><i class="fab fa-uber"></i><h4>Uber</h4></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 60px;">
+                <p style="margin-bottom: 20px; color: var(--gray);">Are you hiring? Find your next star intern today.</p>
+                <a href="{% url 'employer_register' %}" class="btn btn-outline">Register as Employer</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section section-bg-white">
+        <div class="container">
+            <div class="about-grid">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Team" class="about-img">
+                </div>
+                <div>
+                    <h2 style="font-size: 2.5rem; color: var(--dark); margin-bottom: 20px;">Empowering the Next Generation</h2>
+                    <p style="color: var(--gray); margin-bottom: 20px; font-size: 1.1rem;">
+                        InternConnect was built on a simple premise: Talent is everywhere, but opportunity is not. We bridge that gap by connecting ambitious students with forward-thinking companies.
+                    </p>
+                    <p style="color: var(--gray); font-size: 1.1rem;">
+                        Whether you are a student looking for your big break or a company seeking fresh perspectives, we provide the platform, tools, and support to make it happen.
+                    </p>
+
+                    <div class="stats-container">
+                        <div class="stat">
+                            <h3>10k+</h3>
+                            <p>Students</p>
+                        </div>
+                        <div class="stat">
+                            <h3>500+</h3>
+                            <p>Companies</p>
+                        </div>
+                        <div class="stat">
+                            <h3>95%</h3>
+                            <p>Success Rate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <h3 style="color: var(--primary);">InternConnect</h3>
+                    <p style="color: #94a3b8; line-height: 1.6;">Connecting talent with opportunity. The easiest way to find internships and launch your career.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>For Candidates</h3>
+                    <ul>
+                        <li><a href="{% url 'browse_internships' %}">Browse Jobs</a></li>
+                        <li><a href="#">Career Advice</a></li>
+                        <li><a href="{% url 'register' %}">Student Sign Up</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>For Employers</h3>
+                    <ul>
+                        <li><a href="{% url 'employer_register' %}">Post a Job</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="{% url 'employer_register' %}">Employer Sign Up</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 InternConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

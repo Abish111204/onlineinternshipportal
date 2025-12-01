@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Application Board | InternConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f172a; --accent: #2563eb; --light: #f1f5f9; --shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        body {
+            font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px;
+            background: #f1f5f9; min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 260px 1fr; gap: 20px; }
+
+        /* SIDEBAR */
+        .sidebar { background: white; border-radius: 12px; padding: 20px; height: fit-content; min-height: 80vh; position: sticky; top: 20px; }
+        .brand { font-size: 1.4rem; font-weight: 700; color: var(--accent); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px; color: #64748b; text-decoration: none; border-radius: 8px; margin-bottom: 5px; font-weight: 500; transition: 0.3s; }
+        .menu-item:hover, .menu-item.active { background: #eff6ff; color: var(--accent); }
+
+        /* KANBAN BOARD */
+        .board-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .board-header h1 { margin: 0; font-size: 1.8rem; color: var(--primary); }
+
+        .kanban-container {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: start;
+        }
+        .column {
+            background: #e2e8f0; border-radius: 10px; padding: 15px; min-height: 500px;
+        }
+        .col-header {
+            font-weight: 700; color: #475569; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
+            text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;
+        }
+        .badge { background: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; color: #64748b; }
+
+        /* CARDS */
+        .app-card {
+            background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; border-left: 4px solid transparent;
+        }
+        .app-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .app-card.priority-high { border-left-color: var(--accent); }
+
+        .candidate-name { font-weight: 700; color: #1e293b; margin-bottom: 4px; font-size: 1rem; }
+        .job-role { color: #64748b; font-size: 0.85rem; margin-bottom: 10px; display: block; }
+
+        .meta-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 12px; }
+        .tag { background: #f1f5f9; color: #475569; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; }
+
+        .actions { display: flex; gap: 5px; margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 10px; }
+        .btn-action {
+            flex: 1; padding: 6px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; text-align: center; text-decoration: none;
+        }
+        .btn-interview { background: #e0e7ff; color: #4338ca; }
+        .btn-accept { background: #dcfce7; color: #15803d; }
+        .btn-reject { background: #fee2e2; color: #991b1b; }
+        .btn-project { background: #f3e8ff; color: #7e22ce; }
+
+        /* Modal for Dates */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal:target { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 400px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="brand"><i class="fas fa-handshake"></i> InternConnect</div>
+            <a href="{% url 'company_dashboard' %}" class="menu-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+            <a href="{% url 'manage_internships' %}" class="menu-item"><i class="fas fa-tasks"></i> Jobs</a>
+            <a href="#" class="menu-item active"><i class="fas fa-users"></i> Candidates</a>
+            <a href="{% url 'my_notifications' %}" class="menu-item"><i class="fas fa-bell"></i> Notifications</a>
+            <a href="{% url 'logout' %}" class="menu-item" style="color: #ef4444; margin-top: auto;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+
+        <div class="main-content">
+            <div class="board-header">
+                <h1>Candidate Pipeline</h1>
+            </div>
+
+            <div class="kanban-container">
+                <!-- 1. APPLIED -->
+                <div class="column">
+                    <div class="col-header">New Applied <span class="badge">{{ kanban.pending.count }}</span></div>
+                    {% for app in kanban.pending %}
+                    <div class="app-card priority-high">
+                        <div class="candidate-name">{{ app.user.name }} {{ app.user.last_name }}</div>
+                        <span class="job-role">{{ app.internship.positionTitle }}</span>
+                        <div class="meta-tags">
+                            <span class="tag">{{ app.user.degree }}</span>
+                            <span class="tag">GPA: {{ app.user.GPA }}</span>
+                        </div>
+                        <div class="actions">
+                            <a href="#modal-interview-{{app.id}}" class="btn-action btn-interview">Schedule Interview</a>
+                            <a href="{% url 'update_status' app.id 'Rejected' %}" class="btn-action btn-reject">Reject</a>
+                        </div>
+                    </div>
+
+                    <!-- Interview Modal -->
+                    <div id="modal-interview-{{app.id}}" class="modal">
+                        <div class="modal-content">
+                            <h3>Schedule Interview</h3>
+                            <form action="{% url 'schedule_interview' app.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="datetime-local" name="date" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
+                                <input type="url" name="link" placeholder="Meeting Link (Zoom/Meet)" style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
+                                <button type="submit" class="btn-action btn-accept" style="width:100%;">Confirm</button>
+                                <a href="#" style="display:block; text-align:center; margin-top:10px; color:#64748b; text-decoration:none;">Cancel</a>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 2. INTERVIEW -->
+                <div class="column">
+                    <div class="col-header">Interviewing <span class="badge">{{ kanban.interview.count }}</span></div>
+                    {% for app in kanban.interview %}
+                    <div class="app-card" style="border-left-color: #8b5cf6;">
+                        <div class="candidate-name">{{ app.user.name }}</div>
+                        <span class="job-role">{{ app.internship.positionTitle }}</span>
+                        <div style="font-size:0.8rem; color:#4338ca; margin-bottom:10px; background:#e0e7ff; padding:5px; border-radius:4px;">
+                            <i class="fas fa-calendar"></i> {{ app.interview_date }}
+                        </div>
+                        <div class="actions">
+                            <a href="{% url 'update_status' app.id 'Approved' %}" class="btn-action btn-accept">Hire</a>
+                            <a href="{% url 'update_status' app.id 'Rejected' %}" class="btn-action btn-reject">Fail</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 3. HIRED / PROJECT -->
+                <div class="column">
+                    <div class="col-header">Selected & Projects <span class="badge">{{ kanban.selected.count }}</span></div>
+                    {% for app in kanban.selected %}
+                    <div class="app-card" style="border-left-color: #10b981;">
+                        <div class="candidate-name">{{ app.user.name }}</div>
+                        <span class="job-role">{{ app.internship.positionTitle }}</span>
+                        <div class="actions">
+                            <a href="{% url 'project_workspace' app.id %}" class="btn-action btn-project">Manage Project</a>
+                            <a href="{% url 'mark_completed' app.id %}" class="btn-action btn-accept" onclick="return confirm('Complete internship and issue certificate?')">Complete</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 4. COMPLETED -->
+                <div class="column">
+                    <div class="col-header">Completed <span class="badge">{{ kanban.completed.count }}</span></div>
+                    {% for app in kanban.completed %}
+                    <div class="app-card" style="opacity: 0.7;">
+                        <div class="candidate-name">{{ app.user.name }}</div>
+                        <span class="job-role">{{ app.internship.positionTitle }}</span>
+                        <span class="tag" style="background:#dcfce7; color:#166534;">Certified</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

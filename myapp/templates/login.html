@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | InternConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #0f172a; --accent: #2563eb; --shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        /* ANIMATION */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            /* PRO BACKGROUND */
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9)),
+                        url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+
+        /* GLASS CARD */
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            width: 100%; max-width: 420px; padding: 40px; border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo { font-size: 1.8rem; font-weight: 700; color: var(--accent); margin-bottom: 10px; display: inline-block; text-decoration: none; }
+        h2 { margin: 0 0 10px 0; color: var(--primary); font-size: 1.5rem; }
+        p { color: #64748b; font-size: 0.95rem; margin-bottom: 30px; }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 0.9rem; }
+        input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; transition: 0.3s; box-sizing: border-box; }
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+        .btn { width: 100%; padding: 14px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+
+        .footer-links { margin-top: 25px; font-size: 0.9rem; color: #64748b; border-top: 1px solid #eee; padding-top: 20px; }
+        .footer-links a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+        .alert { background: #fee2e2; color: #991b1b; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: left; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <a href="{% url 'index' %}" class="logo"><i class="fas fa-handshake"></i> InternConnect</a>
+        <h2>Welcome Back</h2>
+        <p>Enter your credentials to access your account.</p>
+
+        {% if msg %}
+        <div class="alert"><i class="fas fa-exclamation-circle"></i> {{ msg }}</div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" placeholder="name@example.com" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn">Sign In</button>
+        </form>
+
+        <div class="footer-links">
+            Don't have an account? <a href="{% url 'register' %}">Sign Up</a> <br>
+            <a href="{% url 'employer_register' %}" style="color: #475569; font-size: 0.85rem; display: inline-block; margin-top: 10px;">Are you an Employer? Register here</a>
+        </div>
+    </div>
+</body>
+</html>
